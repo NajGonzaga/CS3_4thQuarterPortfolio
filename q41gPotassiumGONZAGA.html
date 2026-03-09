@@ -63,10 +63,12 @@
             <label>Title:</label>
             <input type="text" id="title" required>
         </div>
+
         <div class="form-group">
             <label>Year:</label>
             <input type="number" id="year" required>
         </div>
+
         <div class="form-group">
             <label>Genre:</label>
             <select id="genre">
@@ -100,6 +102,24 @@
     <div id="movieDisplayList"></div>
 </div>
 
+<script>
+
+    let currentRating = 0;
+    const stars = document.querySelectorAll('.star');
+
+    stars.forEach((star, index) => {
+    star.onclick = () => {
+        currentRating = index + 1; 
+        
+        stars.forEach((s, i) => s.classList.toggle('active', i <= index));
+    };
+});
+
+
+
+
+
+</script>
 
 </body>
 </html>
