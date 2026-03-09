@@ -145,6 +145,18 @@
 
     displayMovies(); 
 
+    function deleteMovie(index) {
+        if (confirm("Are you sure you want to remove this movie?")) {
+            const movies = JSON.parse(localStorage.getItem('movies')) || [];
+            
+            movies.splice(index, 1);
+            
+            localStorage.setItem('movies', JSON.stringify(movies));
+            
+            displayMovies();
+        }
+    }
+
 </script>
 
 </body>
