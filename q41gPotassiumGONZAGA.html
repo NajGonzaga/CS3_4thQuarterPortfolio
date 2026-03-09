@@ -115,9 +115,36 @@
     };
 });
 
+    document.getElementById('movieForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newMovie = {
+            title: document.getElementById('title').value,
+            year: document.getElementById('year').value,
+            genre: document.getElementById('genre').value,
+            rating: currentRating
+        };
 
+        const movies = JSON.parse(localStorage.getItem('movies')) || [];
+        movies.push(newMovie);
+        localStorage.setItem('movies', JSON.stringify(movies));
+        
+        displayMovies();
+        e.target.reset();
+        currentRating = 0;
+        stars.forEach(s => s.classList.remove('selected'));
+    });
 
+    function displayMovies() {
+        const listDiv = document.getElementById('movieDisplayList');
+        const movies = JSON.parse(localStorage.getItem('movies')) || [];
+        listDiv.innerHTML = movies.map(m => `
+            <div class="movie-item">
+                <strong>${m.title} (${m.year})</strong> - ${m.genre}, Rating: ${'★'.repeat(m.rating)}
+            </div>
+        `).join('');
+    }
 
+    displayMovies(); 
 
 </script>
 
