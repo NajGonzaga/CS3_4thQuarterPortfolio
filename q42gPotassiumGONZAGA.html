@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Rating - UD Implementation</title>
     <style>
-        /* Navy Blue Gradient Background */
         body { 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             padding: 40px 20px; 
             margin: 0;
             min-height: 100vh;
-            /* Gradient from Deep Navy to a lighter Navy/Steel Blue */
             background: linear-gradient(135deg, #001529 0%, #003366 100%);
             display: flex;
             justify-content: center;
@@ -143,12 +141,12 @@
     <h2>Add / Update Movie</h2>
     <form id="movieForm">
         <div class="form-group">
-            <label>Title:</label>
-            <input type="text" id="title" placeholder="Enter movie title" required>
+            <label>Movie Title:</label>
+            <input type="text" id="title" placeholder="e.g. Inception" required>
         </div>
 
         <div class="form-group">
-            <label>Year:</label>
+            <label>Release Year:</label>
             <input type="number" id="year" placeholder="YYYY" required>
         </div>
 
@@ -161,15 +159,13 @@
                 <option value="Fantasy">Fantasy</option>
                 <option value="Horror">Horror</option>
                 <option value="Musical">Musical</option>
-                <option value="Mystery">Mystery</option>
-                <option value="Romance">Romance</option>
                 <option value="Science Fiction">Science Fiction</option>
                 <option value="Thriller">Thriller</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label>Rating:</label>
+            <label>Your Rating:</label>
             <div id="star-rating" class="star-container">
                 <span class="star" data-value="1">★</span>
                 <span class="star" data-value="2">★</span>
@@ -178,7 +174,7 @@
                 <span class="star" data-value="5">★</span>
             </div>
         </div>
-        <button type="submit" id="submitBtn">Add Movie</button>
+        <button type="submit" id="submitBtn">Save Movie</button>
     </form>
 
     <hr style="margin: 25px 0; border: 0; border-top: 1px solid #eee;">
@@ -191,101 +187,101 @@
     let currentRating = 0;
     const stars = document.querySelectorAll('.star');
 
-    // Star Rating Click Logic
+    // Star Selection Logic
     stars.forEach(star => {
         star.addEventListener('click', () => {
             currentRating = parseInt(star.getAttribute('data-value'));
-            updateStars(currentRating);
+            updateStarDisplay(currentRating);
         });
     });
 
-    function updateStars(rating) {
+    function updateStarDisplay(rating) {
         stars.forEach(s => {
             s.classList.toggle('selected', s.getAttribute('data-value') <= rating);
         });
     }
 
-    // Form Submission (Create or Update)
+    // CRUD: Create & Update
     document.getElementById('movieForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
-        const titleInput = document.getElementById('title').value.trim();
-        const yearInput = document.getElementById('year').value;
-        const genreInput = document.getElementById('genre').value;
-        const ratingInput = currentRating;
+        const titleVal = document.getElementById('title').value.trim();
+        const yearVal = document.getElementById('year').value;
+        const genreVal = document.getElementById('genre').value;
 
-        if(ratingInput === 0) {
-            alert("Please select a star rating.");
+        if(currentRating === 0) {
+            alert("Please select a star rating before saving.");
             return;
         }
 
         let movies = JSON.parse(localStorage.getItem('movies')) || [];
         
-        // Find if movie title already exists (Update Logic)
-        const existingIndex = movies.findIndex(m => m.title.toLowerCase() === titleInput.toLowerCase());
+        // Find existing movie for Update logic
+        const existingIdx = movies.findIndex(m => m.title.toLowerCase() === titleVal.toLowerCase());
 
-        if (existingIndex !== -1) {
-            // Calculate Average Rating: (Old + New) / 2
-            const oldRating = parseFloat(movies[existingIndex].rating);
-            const newAverage = Math.round((oldRating + ratingInput) / 2);
+        if (existingIdx !== -1) {
+            // Requirement: Average the existing and new rating
+            const oldRating = parseFloat(movies[existingIdx].rating);
+            const averagedRating = Math.round((oldRating + currentRating) / 2);
             
-            // Update details
-            movies[existingIndex].year = yearInput;
-            movies[existingIndex].genre = genreInput;
-            movies[existingIndex].rating = newAverage;
+            movies[existingIdx].year = yearVal;
+            movies[existingIdx].genre = genreVal;
+            movies[existingIdx].rating = averagedRating;
             
-            alert(`"${titleInput}" updated! Rating averaged to ${newAverage} stars.`);
+            alert(`"${titleVal}" updated. New average rating: ${averagedRating} stars.`);
         } else {
-            // Create New Entry
-            const newMovie = {
-                title: titleInput,
-                year: yearInput,
-                genre: genreInput,
-                rating: ratingInput
-            };
-            movies.push(newMovie);
+            // Requirement: Add new movie
+            movies.push({
+                title: titleVal,
+                year: yearVal,
+                genre: genreVal,
+                rating: currentRating
+            });
         }
 
         localStorage.setItem('movies', JSON.stringify(movies));
+        renderList();
         
-        displayMovies();
+        // Reset form
         e.target.reset();
         currentRating = 0;
-        updateStars(0);
+        updateStarDisplay(0);
     });
 
-    // Delete Logic
+    // CRUD: Delete
     function deleteMovie(index) {
-        if (confirm("Are you sure you want to delete this movie?")) {
+        if (confirm("Are you sure you want to delete this movie entry?")) {
             let movies = JSON.parse(localStorage.getItem('movies')) || [];
             movies.splice(index, 1);
             localStorage.setItem('movies', JSON.stringify(movies));
-            displayMovies();
+            renderList();
         }
     }
 
-    // UI Display Logic
-    function displayMovies() {
+    // UI Rendering
+    function renderList() {
         const listDiv = document.getElementById('movieDisplayList');
         const movies = JSON.parse(localStorage.getItem('movies')) || [];
         
         if (movies.length === 0) {
-            listDiv.innerHTML = '<p style="text-align:center; color:#888;">No movies added yet.</p>';
+            listDiv.innerHTML = '<p style="text-align:center; color:#999; font-size: 13px;">Your list is currently empty.</p>';
             return;
         }
 
         listDiv.innerHTML = movies.map((m, index) => `
             <div class="movie-item">
                 <button class="delete-btn" onclick="deleteMovie(${index})">Delete</button>
-                <strong>${m.title} (${m.year})</strong><br>
-                <small>${m.genre}</small> <br>
-                <span class="rating-text">${'★'.repeat(m.rating)}${'☆'.repeat(5 - m.rating)}</span>
+                <span class="movie-info">
+                    <strong>${m.title}</strong> (${m.year})
+                </span>
+                <small style="color: #666;">${m.genre}</small><br>
+                <span class="rating-stars">${'★'.repeat(m.rating)}${'☆'.repeat(5 - m.rating)}</span>
             </div>
         `).join('');
     }
 
-    // Initial Load
-    displayMovies(); 
+    // Load list on startup
+    renderList(); 
 </script>
 
 </body>
