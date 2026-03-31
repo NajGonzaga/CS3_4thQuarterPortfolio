@@ -5,27 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Rating - UD Implementation</title>
     <style>
+        /* Navy Blue Gradient Background */
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            padding: 40px; 
-            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            padding: 40px 20px; 
+            margin: 0;
+            min-height: 100vh;
+            /* Gradient from Deep Navy to a lighter Navy/Steel Blue */
+            background: linear-gradient(135deg, #001529 0%, #003366 100%);
             display: flex;
             justify-content: center;
+            align-items: flex-start;
         }
 
         .container { 
-            background-color: white;
-            border-top: 5px solid #001f3f; 
+            background-color: #ffffff;
             padding: 30px; 
-            width: 400px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         h2, h3 { 
             color: #001f3f; 
             text-align: center;
             margin-top: 0;
+            letter-spacing: 0.5px;
         }
 
         .form-group { 
@@ -33,33 +39,45 @@
         }
 
         label {
-            font-weight: bold;
+            font-weight: 600;
             display: block;
-            color: #333;
+            color: #444;
             margin-bottom: 5px;
+            font-size: 14px;
         }
 
         input, select { 
             width: 100%; 
             padding: 10px; 
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             box-sizing: border-box; 
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #003366;
+            box-shadow: 0 0 0 2px rgba(0,51,102,0.1);
         }
 
         .star-container {
             padding: 5px 0;
+            text-align: center;
         }
 
         .star { 
-            font-size: 28px; 
+            font-size: 32px; 
             cursor: pointer; 
-            color: #ddd; 
-            transition: color 0.2s;
+            color: #e0e0e0; 
+            transition: transform 0.1s;
+            display: inline-block;
         }
 
+        .star:hover { transform: scale(1.1); }
+
         .star.selected { 
-            color: #ffc107; 
+            color: #f1c40f; 
         }
 
         button#submitBtn { 
@@ -68,10 +86,11 @@
             background-color: #001f3f; 
             color: white; 
             border: none; 
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer; 
             font-weight: bold;
             font-size: 16px;
+            margin-top: 10px;
             transition: background 0.3s;
         }
 
@@ -79,38 +98,42 @@
             background-color: #003366;
         }
 
-        #movieDisplayList {
-            margin-top: 20px;
-        }
-
         .movie-item { 
-            background: #fafafa;
-            border: 1px solid #eee; 
+            background: #f8f9fa;
+            border-left: 5px solid #001f3f;
             padding: 15px; 
-            margin-top: 10px; 
+            margin-top: 12px; 
             border-radius: 6px; 
             position: relative;
-            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .delete-btn {
-            background-color: #e74c3c;
+            background-color: #c0392b;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
+            padding: 6px 10px;
+            border-radius: 4px;
             cursor: pointer;
             float: right;
             font-size: 11px;
+            text-transform: uppercase;
+            font-weight: bold;
         }
 
         .delete-btn:hover {
-            background-color: #c0392b;
+            background-color: #a93226;
         }
 
-        .rating-text {
-            color: #ffc107;
-            font-weight: bold;
+        .movie-info {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .rating-stars {
+            color: #f1c40f;
+            font-size: 18px;
         }
     </style>
 </head>
